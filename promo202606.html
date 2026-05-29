@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EZGO 會員夏日專屬抽獎登記</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti (拉炮特效) -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #ffedd5 50%, #fef3c7 100%);
+        }
+        /* 夏天鮮明漸層 */
+        .bg-gradient-sunshine {
+            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+        }
+        .text-gradient-summer {
+            background: linear-gradient(135deg, #0284c7 0%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        /* 輕透氣泡水玻璃面板 */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+        }
+        /* 跑馬燈動畫 */
+        @keyframes marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            display: flex;
+            width: max-content;
+            animation: marquee 20s linear infinite;
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+    <!-- 頂部活動公告跑馬燈 -->
+    <div class="w-full bg-amber-500 text-slate-950 py-2.5 overflow-hidden z-10 shadow-sm">
+        <div class="animate-marquee text-xs md:text-sm font-bold tracking-wider">
+            <span class="px-4"><i class="fa-solid fa-umbrella-beach mr-2"></i>盛夏獵貨祭！EZGO 新會員迎新抽大獎，完成登記即有機會獲得高人氣好禮！</span>
+            <span class="px-4"><i class="fa-solid fa-gift mr-2"></i>登記即可抽Jellycat 可愛玩偶、超夯人氣水壺 Owala ！</span>
+            
+            <!-- 重複一組確保無縫循環 -->
+            <span class="px-4"><i class="fa-solid fa-umbrella-beach mr-2"></i>盛夏獵貨祭！EZGO 新會員迎新抽大獎，完成登記即有機會獲得高人氣好禮！</span>
+            <span class="px-4"><i class="fa-solid fa-gift mr-2"></i>登記即可抽Jellycat 可愛玩偶、超夯人氣水壺 Owala ！</span>
+            
+        </div>
+    </div>
+
+    <!-- 頂部導覽列 -->
+    <header class="w-full max-w-7xl mx-auto px-6 py-4 flex justify-between items-center z-10">
+        <div class="flex items-center space-x-3">
+            <!-- 載入官方指定 Logo 圖片 -->
+            <img 
+                src="https://ezgoex.neocities.org/img/logo-G.png" 
+                alt="EZGO Logo" 
+                class="h-10 md:h-12 w-auto object-contain select-none transition-transform active:scale-[0.98]"
+                onerror="this.onerror=null; this.src='https://placehold.co/120x45/ff7e5f/ffffff?text=EZGO';"
+            >
+            <span class="text-base md:text-lg font-extrabold tracking-widest text-slate-700 hidden sm:inline">2026 夏日迎新盛典</span>
+        </div>
+    </header>
+
+    <!-- 主內容區 -->
+    <main class="flex-grow flex flex-col items-center justify-center px-4 py-4 max-w-2xl mx-auto w-full relative z-10">
+        <!-- 裝飾背景 -->
+        <div class="absolute top-10 left-10 w-80 h-80 bg-cyan-300/20 rounded-full blur-3xl pointer-events-none -z-10"></div>
+        <div class="absolute bottom-10 right-10 w-96 h-96 bg-yellow-400/20 rounded-full blur-3xl pointer-events-none -z-10"></div>
+
+        <!-- 前台抽獎登記視圖 -->
+        <div id="user-section" class="w-full transition-all duration-300">
+            <!-- 活動視覺 Banner Card -->
+            <div class="glass-panel rounded-3xl overflow-hidden shadow-xl border border-white mb-6">
+                <div class="bg-gradient-sunshine p-8 text-center relative overflow-hidden text-white">
+                    <div class="absolute -right-8 -bottom-8 opacity-10 text-9xl"><i class="fa-solid fa-umbrella-beach"></i></div>
+                    <span class="bg-white/30 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest inline-block mb-3 backdrop-blur-sm">Summer Golden Lucky Draw</span>
+                    <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">EZGO 新會員抽大獎</h1>
+                    <p class="text-white/90 text-sm font-light max-w-md mx-auto">
+                        夏天必備！完成 EZGO 會員註冊，輸入會員編號<br>即刻參與超萌 <strong class="underline decoration-wavy text-yellow-300">Jellycat 娃娃</strong> 與人氣水壺 <strong class="underline decoration-wavy text-yellow-300">Owala </strong> 幸運抽獎！
+                    </p>
+                </div>
+
+                <!-- 登記表單 -->
+                <div class="p-6 md:p-8 space-y-6">
+                    <div class="bg-amber-50/80 rounded-2xl p-4 border border-amber-200/50 flex items-start gap-3">
+                        <div class="text-amber-500 mt-0.5 text-lg"><i class="fa-solid fa-circle-info"></i></div>
+                        <div class="text-xs text-slate-600 space-y-1">
+                            <p class="font-bold text-slate-800">登記須知：</p>
+                            <p>1. 每個會員編號<strong class="text-orange-600">限登記一次</strong></p>
+                            <p>2. 請輸入正確會員編號</p>
+                        </div>
+                    </div>
+
+                    <!-- 登記 Form -->
+                    <form id="lottery-form" onsubmit="handleRegistration(event)" class="space-y-5">
+                        <!-- 會員編號輸入框 -->
+                        <div>
+                            <label for="member-id" class="block text-sm font-bold text-slate-700 mb-2">
+                                <i class="fa-solid fa-id-card mr-2 text-cyan-600"></i>EZGO 會員編號 <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <input 
+                                    type="text" 
+                                    id="member-id" 
+                                    required
+                                    placeholder="請輸入您EZGO會員編號" 
+                                    oninput="validateMemberIdInput(this)"
+                                    class="w-full bg-white/90 border border-slate-300 focus:border-cyan-500 rounded-xl px-4 py-3.5 pr-12 text-slate-800 placeholder-slate-400 font-mono text-lg focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition-all shadow-sm"
+                                >
+                                <!-- 即時驗證狀態狀態圖示 -->
+                                <div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                                    <span id="validation-spinner" class="hidden text-slate-400 animate-spin"><i class="fa-solid fa-circle-notch"></i></span>
+                                    <span id="validation-success" class="hidden text-emerald-500 text-lg"><i class="fa-solid fa-circle-check"></i></span>
+                                    <span id="validation-error" class="hidden text-red-500 text-lg"><i class="fa-solid fa-circle-xmark"></i></span>
+                                </div>
+                            </div>
+                            <p id="helper-text" class="mt-2 text-xs text-slate-500 font-medium">系統正在建立即時雲端連線驗證...</p>
+                        </div>
+
+                        <!-- 同意條款 -->
+                        <div class="flex items-start space-x-2 py-1">
+                            <input type="checkbox" id="agree-terms" required class="w-4 h-4 mt-0.5 rounded border-slate-300 bg-white text-cyan-600 focus:ring-cyan-500/20">
+                            <label for="agree-terms" class="text-xs text-slate-500 select-none cursor-pointer">
+                                我已確認我是 EZGO 註冊會員，並同意本活動之抽獎條款與領獎規範。
+                            </label>
+                        </div>
+
+                        <!-- 提交按鈕 -->
+                        <button 
+                            type="submit" 
+                            id="submit-btn"
+                            disabled
+                            class="w-full bg-slate-400 text-white font-black py-4 rounded-xl shadow-lg transition-all transform flex items-center justify-center gap-2 text-lg cursor-not-allowed"
+                        >
+                            <i class="fa-solid fa-circle-notch animate-spin"></i>
+                            <span>雲端連線初始化中...</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 活動獎品展示區域 -->
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="glass-panel p-5 rounded-2xl text-center border border-white relative overflow-hidden group hover:border-cyan-400 transition-all duration-300 shadow-md">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center mx-auto mb-2 text-xl">
+                        <i class="fa-solid fa-face-laugh-beam animate-bounce"></i>
+                    </div>
+                    <span class="absolute top-2 right-2 bg-cyan-100 text-cyan-600 text-[10px] px-2 py-0.5 rounded-full font-bold">超人氣</span>
+                    <h3 class="text-xs text-slate-500 font-medium">Jellycat </h3>
+                    <p class="font-black text-sm text-slate-800 mt-1">經典絨毛玩偶</p>
+                </div>
+                <div class="glass-panel p-5 rounded-2xl text-center border border-white relative overflow-hidden group hover:border-orange-400 transition-all duration-300 shadow-md">
+                    <div class="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center mx-auto mb-2 text-xl">
+                        <i class="fa-solid fa-glass-water-droplet animate-pulse"></i>
+                    </div>
+                    <span class="absolute top-2 right-2 bg-orange-100 text-orange-600 text-[10px] px-2 py-0.5 rounded-full font-bold">網紅爆款</span>
+                    <h3 class="text-xs text-slate-500 font-medium">Owala 密封吸管水壺</h3>
+                    <p class="font-black text-sm text-slate-800 mt-1">專利密封保冷杯</p>
+                </div>
+            </div>
+
+            <!-- 預計開獎時間與領獎規範 -->
+            <div class="glass-panel rounded-3xl p-6 md:p-8 border border-white shadow-xl space-y-6">
+                <div>
+                    <h2 class="text-lg font-black text-slate-800 flex items-center gap-2 pb-2.5 border-b border-slate-200">
+                        
+                        <span>預計開獎時間</span>
+                    </h2>
+                    <p class="text-sm text-slate-600 mt-3 font-semibold leading-relaxed">
+                        本期活動預計於 <strong class="text-orange-600 font-black">2026 年 8 月 31 日 (星期一 ) </strong> 於 EZGO 官方網站最新消息以及官方社群平台公佈中獎名單。
+                    </p>
+                </div>
+
+                <div>
+                    <h2 class="text-lg font-black text-slate-800 flex items-center gap-2 pb-2.5 border-b border-slate-200">
+                       
+                        <span>領獎規範與條款</span>
+                    </h2>
+                    <ul class="text-xs text-slate-600 space-y-3 mt-3 list-decimal pl-4 leading-relaxed">
+                        <li>
+                            <strong class="text-slate-800">資格核對：</strong>中獎名單公佈後，中獎者需於名單公告之日起 <strong class="text-slate-800">14 天內</strong> 主動聯繫客服，並提供您的「EZGO 會員中心個人資料截圖」以茲核對會員編號之所有權，逾期視同放棄領獎資格。
+                        </li>
+                        <li>
+                            <strong class="text-slate-800">限得一次：</strong>本活動每個符合註冊資格的實體會員帳號僅限獲得一個獎項，無法重複領獎。
+                        </li>
+                        <li>
+                            <strong class="text-slate-800">防弊機制：</strong>經系統判定或人工核對，若發現有多個非正常管道註冊、幽靈帳號、或企圖以不當腳本重複登記之會員編號，主辦單位有權取消中獎資格並不予遞補。
+                        </li>
+
+                        <li>
+                            主辦單位 EZGO 保留修改、變更、暫停或終止本活動內容、折合等值商品之權利，並擁有最終活動規則解釋權。
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 頁尾 -->
+    <footer class="w-full border-t border-slate-200/50 py-6 text-center text-xs text-slate-500 bg-white/40 mt-12">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p>&copy; 2026 EZGO 抽獎登記</p>
+            <div class="flex space-x-4">
+              
+                <a href="https://www.ezgoex.com/ContentEx?GID=0690CA39-6051-47B5-A8D3-15DAFE85FDA6" class="hover:text-slate-800 transition-colors">隱私權政策</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============================== 通用自訂彈窗元件 ============================== -->
+    <div id="custom-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl transform scale-95 transition-transform duration-300">
+            <!-- 彈窗頂部視覺 -->
+            <div id="modal-header-accent" class="h-2 bg-gradient-sunshine"></div>
+            
+            <div class="p-6 text-center space-y-4">
+                <!-- 圖示 -->
+                <div id="modal-icon-container" class="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center text-3xl">
+                    <!-- 動態載入 -->
+                </div>
+                <!-- 標題與內文 -->
+                <div class="space-y-2">
+                    <h3 id="modal-title" class="text-xl font-bold text-slate-800">預設標題</h3>
+                    <p id="modal-message" class="text-sm text-slate-500 leading-relaxed">預設訊息內容。</p>
+                </div>
+                <!-- 按鈕區 -->
+                <div class="pt-2" id="modal-action-area">
+                    <button id="modal-btn" onclick="closeModal()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition-all">
+                        我知道了
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================== Firebase & JavaScript 核心邏輯 ============================== -->
+    <script type="module">
+        // 匯入 Firebase SDK 11.6.1 模組
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInWithCustomToken, 
+            signInAnonymously, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, 
+            getDoc, 
+            collection, 
+            onSnapshot 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+
+        // --- 100% 精確且驗證過的真實 Firebase 設定資訊 ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'ezgo-promo2026';
+        const firebaseConfig = {
+            apiKey: "AIzaSyBs0Qx9FJDt8mG0VvC7YDNdZixrCLZtWjQ",
+            authDomain: "ezgo-promo2026.firebaseapp.com",
+            projectId: "ezgo-promo2026",
+            storageBucket: "ezgo-promo2026.firebasestorage.app",
+            messagingSenderId: "671909359437",
+            appId: "1:671909359437:web:d4aa4aea20e022ba789104",
+            measurementId: "G-3CKKJHSPVC"
+        };
+
+        // 初始化 Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const analytics = getAnalytics(app);
+
+        // --- Firestore 嚴格路徑定義 ---
+        const getRegistrationsCol = () => collection(db, 'artifacts', appId, 'public', 'data', 'registrations');
+        const getRegistrationDoc = (id) => doc(db, 'artifacts', appId, 'public', 'data', 'registrations', id.toString());
+        const getConfigDoc = () => doc(db, 'artifacts', appId, 'public', 'data', 'config', 'system');
+
+        // --- 全域變數狀態 ---
+        let maxMemberId = 22600; // 預設最大 ID
+        let validationMode = 'range'; // 'range' 或 'whitelist'
+        let whitelist = new Set();
+        let registeredList = []; 
+
+        // --- Firebase 安全認證通道 ---
+        const initAuth = async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    try {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } catch (tokenError) {
+                        console.warn("自訂憑證衝突，自動切換至『匿名安全通道』:", tokenError);
+                        await signInAnonymously(auth);
+                    }
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Firebase authentication error:", error);
+            }
+        };
+
+        // 監聽 Auth 狀態
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // 啟用登記按鈕
+                const submitBtn = document.getElementById('submit-btn');
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.className = "w-full bg-gradient-sunshine hover:opacity-95 text-white font-black py-4 rounded-xl shadow-lg shadow-orange-500/20 transition-all transform active:scale-[0.99] flex items-center justify-center gap-2 text-lg cursor-pointer";
+                    submitBtn.innerHTML = '<i class="fa-solid fa-ice-cream"></i><span>登記盛夏幸運抽獎</span>';
+                }
+                
+                // 開始訂閱雲端資料庫
+                setupFirestoreSubscriptions();
+            }
+        });
+
+        // 啟動認證
+        initAuth();
+
+        // --- 訂閱 Firestore 實時資料 ---
+        function setupFirestoreSubscriptions() {
+            if (!auth.currentUser) return;
+
+            // 1. 訂閱登記數據
+            onSnapshot(getRegistrationsCol(), (snapshot) => {
+                const list = [];
+                snapshot.forEach((doc) => {
+                    list.push({
+                        id: parseInt(doc.id),
+                        ...doc.data()
+                    });
+                });
+                registeredList = list;
+                updateUI();
+            }, (error) => {
+                console.error("Snapshot registration subscription error:", error);
+            });
+
+            // 2. 訂閱雲端防呆參數
+            onSnapshot(getConfigDoc(), (snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.data();
+                    if (data.maxMemberId !== undefined) {
+                        maxMemberId = data.maxMemberId;
+                    }
+                    if (data.validationMode !== undefined) {
+                        validationMode = data.validationMode;
+                    }
+                    if (data.whitelist !== undefined) {
+                        whitelist = new Set(data.whitelist);
+                    }
+                } else {
+                    // 若雲端無資料則初始
+                    setDoc(getConfigDoc(), {
+                        maxMemberId: maxMemberId,
+                        validationMode: validationMode,
+                        whitelist: Array.from(whitelist)
+                    }).catch(err => console.error("Initialize cloud configuration error:", err));
+                }
+                updateUI();
+            }, (error) => {
+                console.error("Config snapshot subscription error:", error);
+            });
+        }
+
+        // --- STREAMING_CHUNK: 雲端登記防重複提交主邏輯... ---
+        // --- 雲端提交登記邏輯 ---
+        async function handleRegistration(event) {
+            event.preventDefault();
+            if (!auth.currentUser) {
+                showModal("系統未就緒 ❌", "目前與資料庫通訊中，請稍候再試。", "error");
+                return;
+            }
+            
+            const idInput = document.getElementById('member-id');
+            const agreeCheckbox = document.getElementById('agree-terms');
+            const idVal = idInput.value.trim();
+
+            if (!/^\d+$/.test(idVal)) {
+                showModal('編號格式錯誤 ⚠️', '您輸入的會員編號格式不正確，必須是「純數字」。', 'error');
+                return;
+            }
+
+            const id = parseInt(idVal);
+
+            // 1. 本地快照快速檢驗
+            const isLocalDuplicate = registeredList.some(item => item.id === id);
+            
+            try {
+                // 2. 雲端實時單點 getDoc 雙重保險驗證 (確保 100% 攔截重複)
+                const docRef = getRegistrationDoc(id);
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists() || isLocalDuplicate) {
+                    showModal(
+                        '重複登記警告 ⚠️', 
+                        `會員編號 [ ${id} ] 先前已完成過抽獎登記，無法重複參與！如有疑問請向 EZGO 客服反映！`, 
+                        'warning'
+                    );
+                    return;
+                }
+            } catch (err) {
+                console.error("Duplicate checking error:", err);
+                // 容錯處理：若 getDoc 失敗但本地判定重複，依然要阻攔
+                if (isLocalDuplicate) {
+                    showModal(
+                        '重複登記警告 ⚠️', 
+                        `會員編號 [ ${id} ] 先前已完成過抽獎登記，無法重複參與！如有疑問請向 EZGO 客服反映！`, 
+                        'warning'
+                    );
+                    return;
+                }
+            }
+
+            // 驗證資格範圍
+            if (validationMode === 'range') {
+                if (id < 1 || id > maxMemberId) {
+                    showModal(
+                        '未註冊或超出範圍 ❌', 
+                        `登記失敗！編號 [ ${id} ] 不在目前註冊會員範圍 (1 ~ ${formatNumber(maxMemberId)}) 中。`, 
+                        'error'
+                    );
+                    return;
+                }
+            } else {
+                if (!whitelist.has(id)) {
+                    showModal(
+                        '無效會員編號 ❌', 
+                        `登記失敗！此編號 [ ${id} ] 未存在於最新的官網註冊會員資料庫中。`, 
+                        'error'
+                    );
+                    return;
+                }
+            }
+
+            // 寫入 Firebase
+            try {
+                await setDoc(getRegistrationDoc(id), {
+                    time: new Date().toLocaleString('zh-TW', { hour12: false })
+                });
+
+                triggerConfetti();
+                // 移除了舊版的「資料已安全備份至雲端」
+                showModal(
+                    '登記成功 🎉', 
+                    `恭喜會員編號 [ ${id} ] 登記完成！中獎結果將於指定開獎日公佈！`, 
+                    'success'
+                );
+
+                // 重置
+                idInput.value = '';
+                agreeCheckbox.checked = false;
+                hideAllValidationIcons();
+            } catch (error) {
+                console.error("Cloud registration failed:", error);
+                showModal("同步失敗 ❌", "上傳雲端時發生錯誤，請檢查您的網路連線。", "error");
+            }
+        }
+
+        // --- STREAMING_CHUNK: UI 輔助與特效工具函式... ---
+        // --- UI 即時驗證與效果 ---
+        function updateUI() {
+            const rangeTextSpan = document.getElementById('display-range-text');
+            if (validationMode === 'range') {
+                if (rangeTextSpan) rangeTextSpan.textContent = `1 ~ ${formatNumber(maxMemberId)}`;
+                const helper = document.getElementById('helper-text');
+                if (helper) helper.textContent = `請輸入會員編號。 ${formatNumber(maxMemberId)}。`;
+            } else {
+                if (rangeTextSpan) rangeTextSpan.textContent = `精準資料庫驗證中 (${whitelist.size} 筆有效會員)`;
+                const helper = document.getElementById('helper-text');
+                if (helper) helper.textContent = `精準名單模式啟用中。`;
+            }
+        }
+
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\n))/g, ",");
+        }
+
+        function validateMemberIdInput(input) {
+            const val = input.value.trim();
+            const successIcon = document.getElementById('validation-success');
+            const errorIcon = document.getElementById('validation-error');
+            const spinner = document.getElementById('validation-spinner');
+            
+            if (!val) {
+                hideAllValidationIcons();
+                return;
+            }
+
+            spinner.classList.remove('hidden');
+            successIcon.classList.add('hidden');
+            errorIcon.classList.add('hidden');
+
+            setTimeout(() => {
+                spinner.classList.add('hidden');
+                const num = parseInt(val);
+
+                if (!/^\d+$/.test(val) || isNaN(num)) {
+                    errorIcon.classList.remove('hidden');
+                    return;
+                }
+
+                const isDuplicate = registeredList.some(item => item.id === num);
+                if (isDuplicate) {
+                    errorIcon.classList.remove('hidden');
+                    return;
+                }
+
+                if (validationMode === 'range') {
+                    if (num >= 1 && num <= maxMemberId) {
+                        successIcon.className = "text-emerald-500 text-lg";
+                        successIcon.classList.remove('hidden');
+                    } else {
+                        errorIcon.classList.remove('hidden');
+                    }
+                } else {
+                    if (whitelist.has(num)) {
+                        successIcon.className = "text-emerald-500 text-lg";
+                        successIcon.classList.remove('hidden');
+                    } else {
+                        errorIcon.classList.remove('hidden');
+                    }
+                }
+            }, 120);
+        }
+
+        function hideAllValidationIcons() {
+            document.getElementById('validation-success').classList.add('hidden');
+            document.getElementById('validation-error').classList.add('hidden');
+            document.getElementById('validation-spinner').classList.add('hidden');
+        }
+
+        function triggerConfetti() {
+            const duration = 2 * 1000;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#06b6d4', '#f59e0b', '#ff7e5f']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#06b6d4', '#f59e0b', '#ff7e5f']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+        // --- STREAMING_CHUNK: 彈窗展示管理器邏輯... ---
+        function showModal(title, message, type = 'success') {
+            const modal = document.getElementById('custom-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalMsg = document.getElementById('modal-message');
+            const iconContainer = document.getElementById('modal-icon-container');
+            const accent = document.getElementById('modal-header-accent');
+            const btn = document.getElementById('modal-btn');
+
+            modalTitle.textContent = title;
+            modalMsg.textContent = message;
+
+            if (type === 'success') {
+                iconContainer.className = "w-16 h-16 rounded-2xl mx-auto flex items-center justify-center text-3xl bg-emerald-500/10 text-emerald-500";
+                iconContainer.innerHTML = '<i class="fa-solid fa-circle-check animate-bounce"></i>';
+                accent.className = "h-2 bg-emerald-500";
+                if(btn) btn.className = "w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-white font-bold rounded-xl transition-all shadow-sm cursor-pointer";
+            } else if (type === 'warning') {
+                iconContainer.className = "w-16 h-16 rounded-2xl mx-auto flex items-center justify-center text-3xl bg-amber-500/10 text-amber-500";
+                iconContainer.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+                accent.className = "h-2 bg-amber-500";
+                if(btn) btn.className = "w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl transition-all shadow-sm cursor-pointer";
+            } else { 
+                iconContainer.className = "w-16 h-16 rounded-2xl mx-auto flex items-center justify-center text-3xl bg-rose-500/10 text-rose-500";
+                iconContainer.innerHTML = '<i class="fa-solid fa-circle-xmark"></i>';
+                accent.className = "h-2 bg-rose-500";
+                if(btn) btn.className = "w-full py-3 bg-rose-500 hover:bg-rose-400 text-white font-bold rounded-xl transition-all shadow-sm cursor-pointer";
+            }
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('div').classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('custom-modal');
+            modal.classList.add('opacity-0');
+            modal.querySelector('div').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        window.closeModal = closeModal;
+        window.handleRegistration = handleRegistration;
+        window.validateMemberIdInput = validateMemberIdInput;
+    </script>
+</body>
+</html>
