@@ -1141,8 +1141,8 @@
 
   <!-- ================= JAVASCRIPT 功能與互動控制 ================= -->
   <script>
-    // 預設將模擬燃油基準值修正為 39.5%，保證計算準確，且對應 39.5% + 1.0% = 40.5% (1.405 乘數)
-    let fuelSurchargeRate = 39.5; 
+    // 預設將模擬燃油基準值修正為 41.5%，保證計算準確，且對應 41.5% + 1.0% = 42.5% (1.425 乘數)
+    let fuelSurchargeRate = 41.5; 
 
     // 網頁載入完成後初始化
     document.addEventListener("DOMContentLoaded", function() {
@@ -1316,9 +1316,9 @@
       return null;
     }
 
-    // 當 API 抓取失敗時的自適應基準點 (確保預設始終為 39.5%，完美對應您手算的 1.405)
+    // 當 API 抓取失敗時的自適應基準點 (確保預設始終為 41.5%，完美對應您手算的 1.425)
     function getDynamicSurchargeFallback() {
-      return 39.5;
+      return 41.5;
     }
 
     // 動態更新本週適用區間日期
@@ -1373,17 +1373,17 @@
       // 一口價基本費小計 (例如: 128 * 2 = 256)
       const totalBasePrice = basePrice * qty;
 
-      // 核心要求公式：燃油附加費率 = FedEx Export 欄位值 (39.5%) + 1.0% = 40.5%
+      // 核心要求公式：燃油附加費率 = FedEx Export 欄位值 (41.5%) + 1.0% = 42.5%
       const finalSurchargePercent = fuelSurchargeRate + 1.0; 
       
-      // 加權乘數 = 1 + (40.5 / 100) = 1.405
+      // 加權乘數 = 1 + (42.5 / 100) = 1.425
       const multiplier = 1.0 + (finalSurchargePercent / 100.0);
       
-      // 一口價加成燃油費後的最終預估運費 (例如: 256 * 1.405 = 359.68)
+      // 一口價加成燃油費後的最終預估運費 (例如: 256 * 1.425 = 364.8)
       const finalPriceWithFuel = totalBasePrice * multiplier;
 
       badge.innerText = discountLabel;
-      totalText.innerText = finalPriceWithFuel.toFixed(2); // 輸出 359.68
+      totalText.innerText = finalPriceWithFuel.toFixed(2); // 輸出 364.8
     }
 
     // 8. 網頁滾動控制
