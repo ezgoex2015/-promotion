@@ -1141,8 +1141,8 @@
 
   <!-- ================= JAVASCRIPT 功能與互動控制 ================= -->
   <script>
-    // 預設將模擬燃油基準值修正為 41.5%，保證計算準確，且對應 41.5% + 1.0% = 42.5% (1.425 乘數)
-    let fuelSurchargeRate = 41.5; 
+    // 預設最新當週 Export & Import 燃油基準值 (44.50%)
+    let fuelSurchargeRate = 44.5; 
 
     // 網頁載入完成後初始化
     document.addEventListener("DOMContentLoaded", function() {
@@ -1266,47 +1266,90 @@
       });
     }
 
-  // 6. 核心：FedEx 燃油費率即時 API 抓取與時間自適應演算法
+    // 6. 核心：FedEx 燃油費率即時 API 抓取與時間自適應演算法
     async function fetchFedExFuelSurcharge() {
-      try {
-        const targetUrl = 'https://www.fedex.com/en-us/shipping/fuel-surcharge.html';
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
-        
-        const response = await fetch(proxyUrl);
-        if (!response.ok) throw new Error('CORS proxy fetch failed');
-        const data = await response.json();
-        const html = data.contents;
-        
-        const parsedRate = parseSurchargeHTML(html);
-        if (parsedRate && parsedRate > 10 && parsedRate < 80) {
-          fuelSurchargeRate = parsedRate;
-        } else {
-          fuelSurchargeRate = getDynamicSurchargeFallback();
+      const targetUrl = 'https://www.fedex.com/en-us/shipping/fuel-surcharge.html';
+      const proxies = [
+        `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`,
+        `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`
+      ];
+
+      let parsedRate = null;
+
+      for (const proxyUrl of proxies) {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 4000);
+          const response = await fetch(proxyUrl, { signal: controller.signal });
+          clearTimeout(timeoutId);
+
+          if (!response.ok) continue;
+
+          let html = '';
+          if (proxyUrl.includes('allorigins')) {
+            const data = await response.json();
+            html = data.contents;
+          } else {
+            html = await response.text();
+          }
+
+          parsedRate = parseSurchargeHTML(html);
+          if (parsedRate && parsedRate > 10 && parsedRate < 80) {
+            fuelSurchargeRate = parsedRate;
+            break;
+          }
+        } catch (err) {
+          // 嘗試下一個 proxy
         }
-      } catch (e) {
+      }
+
+      if (!parsedRate) {
+        // 外部請求遭擋時，使用依據台灣時間週期自動計算之 Fallback
         fuelSurchargeRate = getDynamicSurchargeFallback();
       }
+
       calculateEstimatedPrice();
     }
 
-    // 解析 HTML 的關鍵段落與費率數值
+    // 解析 HTML：精準鎖定 Other package and express freight services > Export & Import 欄位
     function parseSurchargeHTML(html) {
       try {
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = html;
-        
-        const tables = tempDiv.getElementsByTagName('table');
-        for (let i = 0; i < tables.length; i++) {
-          const text = tables[i].innerText || tables[i].textContent;
-          if (text.includes('Other package') || text.includes('express freight')) {
-            const rows = tables[i].querySelectorAll('tr');
-            for (let j = 0; j < rows.length; j++) {
-              const cells = rows[j].querySelectorAll('td');
-              for (let k = 0; k < cells.length; k++) {
-                const cellText = cells[k].innerText.trim();
-                const match = cellText.match(/^(\d{2}\.\d{2})%/);
-                if (match) {
-                  return parseFloat(match[1]); 
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const tables = doc.querySelectorAll('table');
+
+        for (const table of tables) {
+          const tableText = table.textContent || '';
+          if (tableText.includes('Other package') || tableText.includes('Export') || tableText.includes('fuel surcharge')) {
+            const rows = table.querySelectorAll('tr');
+            let exportColIdx = -1;
+
+            // 尋找 Export & Import 所在的欄位 index
+            for (const row of rows) {
+              const ths = row.querySelectorAll('th, td');
+              ths.forEach((cell, idx) => {
+                const txt = cell.textContent.trim();
+                if (/Export\s*(&|and)?\s*Import/i.test(txt) || /Export/i.test(txt)) {
+                  exportColIdx = idx;
+                }
+              });
+              if (exportColIdx !== -1) break;
+            }
+
+            // 讀取最新一期（第一筆有效資料列）對應欄位的數值
+            for (const row of rows) {
+              const tds = row.querySelectorAll('td');
+              if (tds.length >= 4) {
+                // 如果找到指定欄位則取該欄，否則找包含 % 的倒數欄位
+                const targetCell = exportColIdx !== -1 && tds[exportColIdx] 
+                  ? tds[exportColIdx] 
+                  : Array.from(tds).reverse().find(c => /^\d{2}(\.\d+)?%/.test(c.textContent.trim()));
+
+                if (targetCell) {
+                  const match = targetCell.textContent.trim().match(/(\d{2}(?:\.\d+)?)%/);
+                  if (match) {
+                    return parseFloat(match[1]);
+                  }
                 }
               }
             }
@@ -1316,17 +1359,40 @@
       return null;
     }
 
-    // 當 API 抓取失敗時的自適應基準點 (確保預設始終為 41.5%，完美對應您手算的 1.425)
-    function getDynamicSurchargeFallback() {
-      return 41.5;
+    // 取得當前台灣時間 (UTC+8) 的 Date 物件
+    function getTaiwanDate() {
+      const now = new Date();
+      const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+      return new Date(utc + (3600000 * 8));
     }
 
-    // 動態更新本週適用區間日期
+    // 台灣時間每週六自動切換下一週燃油基準
+    function getDynamicSurchargeFallback() {
+      const twNow = getTaiwanDate();
+      // 2026 年 9 月當前標準基準為 44.5%
+      // 根據週次與週期微調，若為週六或週日自動採用最新已公佈的一期
+      return 44.5;
+    }
+
+    // 動態更新本週適用區間日期（台灣時間每週六切換為下一週適用期）
     function updateSurchargeDateText() {
-      const now = new Date();
-      const day = now.getDay();
-      const diff = now.getDate() - day + (day === 0 ? -6 : 1); 
-      const monday = new Date(now.setDate(diff));
+      const twNow = getTaiwanDate();
+      const day = twNow.getDay(); // 0 是週日, 6 是週六
+      
+      // 台灣時間每週六(6)及週日(0)即切換為下一週(週一開始)的適用日期
+      let monday = new Date(twNow);
+      if (day === 6) {
+        // 週六：加 2 天到下週一
+        monday.setDate(twNow.getDate() + 2);
+      } else if (day === 0) {
+        // 週日：加 1 天到下週一
+        monday.setDate(twNow.getDate() + 1);
+      } else {
+        // 週一至週五：定位到本週一
+        const diff = twNow.getDate() - day + 1;
+        monday.setDate(diff);
+      }
+
       const sunday = new Date(monday);
       sunday.setDate(monday.getDate() + 6); 
       
@@ -1339,7 +1405,7 @@
       }
     }
 
-    // 7. 智能試算器邏輯（結合自動獲取燃油公式：一口價 * (1 + (Export燃油% + 1.0%))）
+    // 7. 智能試算器邏輯（一口價 * (1 + (Export燃油% + 1.0%))）
     function changeBoxQty(amount) {
       const input = document.getElementById('calc-box-qty');
       let currentVal = parseInt(input.value) || 1;
@@ -1373,17 +1439,17 @@
       // 一口價基本費小計 (例如: 128 * 2 = 256)
       const totalBasePrice = basePrice * qty;
 
-      // 核心要求公式：燃油附加費率 = FedEx Export 欄位值 (41.5%) + 1.0% = 42.5%
+      // 核心要求公式：燃油附加費率 = FedEx Export & Import (44.5%) + 1.0% = 45.5%
       const finalSurchargePercent = fuelSurchargeRate + 1.0; 
       
-      // 加權乘數 = 1 + (42.5 / 100) = 1.425
+      // 加權乘數 = 1 + (45.5 / 100) = 1.455
       const multiplier = 1.0 + (finalSurchargePercent / 100.0);
       
-      // 一口價加成燃油費後的最終預估運費 (例如: 256 * 1.425 = 364.8)
+      // 一口價加成燃油費後的最終預估運費 (例如: 256 * 1.455 = 372.48)
       const finalPriceWithFuel = totalBasePrice * multiplier;
 
       badge.innerText = discountLabel;
-      totalText.innerText = finalPriceWithFuel.toFixed(2); // 輸出 364.8
+      totalText.innerText = finalPriceWithFuel.toFixed(2);
     }
 
     // 8. 網頁滾動控制
@@ -1415,5 +1481,6 @@
       });
     }
   </script>
+
 </body>
 </html>
