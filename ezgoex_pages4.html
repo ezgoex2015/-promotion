@@ -529,6 +529,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <!-- 說明卡片 -->
             <div class="bg-brand-sky-50/50 p-4 rounded-2xl rounded-tl-none border border-brand-sky-100/60 text-xs text-brand-sky-800 space-y-1">
               <span class="font-bold block text-brand-sky-900">💡 運費規則小教室：</span>
+              <p>▶<strong>關於試算：</strong>試算金額為不包稅價格！如有關稅會隨貨與收件方收取。關稅金額超過萬元以上須先轉帳匯款!</p>
               <p>▶<strong>免材積條件：</strong>單箱任何一邊長度不超過 30 英吋且三邊加總（長+寬+高）不超過 49 英吋。符合此條件即免材積，僅以實重計費！</p>
               <p>▶<strong>材積計算式：</strong>不符合免材積者，採用「長x寬x高 ÷ 139」（數值皆小數點進位），並與實際重量取重者計算。</p>
               <p>▶<strong>超規外加費用：</strong>單邊長度超過 48 吋、任意兩邊長度皆超過 27 吋、或單箱重量超過 80 磅時，將加收超材/超重費 NT$1,200。</p>
@@ -554,7 +555,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <div id="calc-results-panel" class="hidden space-y-6">
                 <!-- 總預估費用 -->
                 <div class="text-center bg-white/5 py-4 rounded-2xl border border-white/10">
-                  <span class="text-xs text-slate-400 font-medium block">預估總運費 (台幣 NTD)</span>
+                  <span class="text-xs text-slate-400 font-medium block">預估總運費 (台幣 NTD)(不包稅方案)</span>
                   <span id="result-total-fee" class="text-3xl sm:text-4xl font-black text-brand-orange-500 tracking-tight">NT$ 0</span>
                 </div>
 
@@ -800,8 +801,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="bg-white rounded-3xl rounded-tl-none shadow-sm border border-slate-100 overflow-hidden">
             <div class="p-6 bg-slate-900 text-white flex flex-col md:flex-row md:justify-between md:items-center space-y-2 md:space-y-0">
               <div>
-                <h3 class="text-lg font-bold">基本收費方案 (實重/材積比重方案)</h3>
-                <p class="text-xs text-slate-400 mt-1">最低每磅只要 NT$135，包稅方案最低每磅只要 NT$180 ❗</p>
+                <h3 class="text-lg font-bold">基本收費不包稅方案 (實重/材積比重方案)</h3>
+                <p class="text-xs text-slate-400 mt-1">不包稅方案最低每磅只要 NT$135，包稅方案最低每磅只要 NT$180 ❗</p>
+                <p class="text-xs text-slate-400 mt-1">包稅方案: 會採用包裹尺寸重量取重的一方計算，貨件價值不得超過200USD</p>
               </div>
               <div class="text-xs bg-brand-sky-600/30 border border-brand-sky-500/50 text-brand-sky-300 px-3 py-1.5 rounded-lg">
                 本表最新生效時間：即日起適用
@@ -813,9 +815,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <thead class="bg-slate-50 border-b border-slate-100 text-slate-600 uppercase font-semibold">
                   <tr>
                     <th scope="col" class="px-6 py-4">計費磅數 (LB)</th>
-                    <th scope="col" class="px-6 py-4">一般集運費用 (NTD)</th>
+                    <th scope="col" class="px-6 py-4">不包稅費用 (NTD)</th>
                     <th scope="col" class="px-6 py-4">計費磅數 (LB)</th>
-                    <th scope="col" class="px-6 py-4">一般集運費用 (NTD)</th>
+                    <th scope="col" class="px-6 py-4">不包稅運費用 (NTD)</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-slate-700">
